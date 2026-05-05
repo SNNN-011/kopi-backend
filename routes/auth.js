@@ -90,7 +90,7 @@ router.get('/users', verifyToken, isAdmin, async (req, res) => {
 // ... (kode sebelumnya)
 
 // PUT /api/auth/users/:id/role — Mengubah role user (Admin Only)
-router.put('/users/:id/role', async (req, res) => {
+router.put('/users/:id/role', verifyToken, isAdmin, async (req, res) => {
   try {
     const { role } = req.body;
     
@@ -112,7 +112,5 @@ router.put('/users/:id/role', async (req, res) => {
     res.status(500).json({ message: 'Gagal memperbarui role' });
   }
 });
-
-module.exports = router;
 
 module.exports = router
