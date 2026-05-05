@@ -11,6 +11,21 @@ router.post('/', verifyToken, async (req, res) => {
   try {
     const { items, alamat, metodePembayaran } = req.body
 
+    // Validasi items
+      if (!items || !Array.isArray(items) || items.length === 0) {
+        return res.status(400).json({ message: 'Items tidak boleh kosong' })
+      }
+      for (const item of items) {
+        if (!Number.isInteger(item.jumlah) || item.jumlah < 1 || item.jumlah > 100) {
+          return res.status(400).json({ message: 'Jumlah item harus antara 1-100' })
+        }
+      }
+
+      // Validasi alamat
+      if (!alamat || typeof alamat !== 'string' || alamat.length > 300) {
+        return res.status(400).json({ message: 'Alamat tidak valid' })
+      }
+
     let totalHarga = 0
     const itemsLengkap = await Promise.all(
       items.map(async (item) => {
