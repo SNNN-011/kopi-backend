@@ -13,7 +13,7 @@ const app = express()
 app.use(cors({
   origin: [
     'http://localhost:3000',
-    'https://toko-kopi-bubuk.vercel.app/', // ← ganti dengan URL Vercel kamu
+    'https://toko-kopi-bubuk.vercel.app', // ← ganti dengan URL Vercel kamu
   ],
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization'],
