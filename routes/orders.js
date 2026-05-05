@@ -22,42 +22,35 @@ router.post('/', verifyToken, async (req, res) => {
       }
 
       // Validasi alamat
-      if (!alamat || typeof alamat !== 'object') {
+      if (!alamat || typeof alamat !== 'string' || alamat.length > 300) {
         return res.status(400).json({ message: 'Alamat tidak valid' })
-      }
-      if (!alamat.nama || !alamat.jalan || !alamat.kota) {
-        return res.status(400).json({ message: 'Alamat harus mengisi nama, jalan, dan kota' })
       }
 
     let totalHarga = 0
-    // ✅ Sesudah — dua tahap: validasi dulu, baru kurangi
-// TAHAP 1: Ambil & validasi semua produk, jangan ubah stok dulu
-    const produkList = await Promise.all(
+    const itemsLengkap = await Promise.all(
       items.map(async (item) => {
         const produk = await Product.findById(item.produkId)
         if (!produk) throw new Error(`Produk tidak ditemukan`)
+        
+        // --- TAMBAHAN LOGIKA CEK STOK ---
         if (produk.stok < item.jumlah) {
           throw new Error(`Stok untuk ${produk.nama} tidak mencukupi`)
         }
-        return { produk, item }
+        
+        totalHarga += produk.harga * item.jumlah
+        
+        // --- TAMBAHAN LOGIKA KURANGI STOK ---
+        produk.stok -= item.jumlah
+        await produk.save() // Simpan perubahan stok ke database
+        
+        return {
+          produk: produk._id,
+          nama:   produk.nama,
+          harga:  produk.harga,
+          jumlah: item.jumlah
+        }
       })
     )
-
-    // Kalau sampai sini berarti semua produk valid, aman untuk lanjut
-
-    // TAHAP 2: Hitung total & kurangi stok semua sekaligus
-    const itemsLengkap = []
-    for (const { produk, item } of produkList) {
-      totalHarga += produk.harga * item.jumlah
-      produk.stok -= item.jumlah
-      await produk.save()
-      itemsLengkap.push({
-        produk: produk._id,
-        nama:   produk.nama,
-        harga:  produk.harga,
-        jumlah: item.jumlah
-      })
-    }
 
     const order = await Order.create({
       user:             req.user.id,
