@@ -1,27 +1,18 @@
-// server.js
+// server.js — sementara tanpa routes dulu
 
 const express   = require('express')
 const cors      = require('cors')
+const dotenv    = require('dotenv')
 const connectDB = require('./config/db')
 
-// Hanya load dotenv di local, Railway inject env otomatis
-if (process.env.NODE_ENV !== 'production') {
-  require('dotenv').config()
-}
-
+dotenv.config()
 connectDB()
 
 const app = express()
-
-// Izinkan semua origin di production, ganti dengan URL frontend kamu setelah deploy
-app.use(cors({
-  origin: process.env.FRONTEND_URL || '*',
-  methods: ['GET', 'POST', 'PUT', 'DELETE'],
-  allowedHeaders: ['Content-Type', 'Authorization']
-}))
+app.use(cors({ origin: 'http://localhost:3000' }))
 app.use(express.json())
 
-// Routes
+// Routes — aktifkan satu per satu setelah file-nya dibuat
 const authRoutes    = require('./routes/auth')
 const productRoutes = require('./routes/products')
 const orderRoutes   = require('./routes/orders')
@@ -36,13 +27,7 @@ app.get('/', (req, res) => {
   res.json({ message: '🍵 Kopi Toko API berjalan!' })
 })
 
-// Untuk local development
-if (process.env.NODE_ENV !== 'production') {
-  const PORT = process.env.PORT || 5000
-  app.listen(PORT, () => {
-    console.log(`Server berjalan di port ${PORT}`)
-  })
-}
-
-// WAJIB untuk Vercel — export app sebagai module
-module.exports = app
+const PORT = process.env.PORT || 5000
+app.listen(PORT, () => {
+  console.log(`Server berjalan di port ${PORT}`)
+})
