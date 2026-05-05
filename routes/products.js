@@ -57,17 +57,14 @@ router.post('/', verifyToken, isAdmin, async (req, res) => {
 })
 
 // PUT /api/products/:id — edit produk (admin)
-// ✅ Sesudah — hanya field yang diizinkan
 router.put('/:id', verifyToken, isAdmin, async (req, res) => {
   try {
     await connectDB()
 
-    const { nama, deskripsi, harga, stok, kategori, berat, gambar, tersedia } = req.body
-
     const product = await Product.findByIdAndUpdate(
       req.params.id,
-      { nama, deskripsi, harga, stok, kategori, berat, gambar, tersedia },
-      { new: true }
+      req.body,
+      { new: true } // kembalikan data yang sudah diupdate
     )
     if (!product) {
       return res.status(404).json({ message: 'Produk tidak ditemukan' })
