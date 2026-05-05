@@ -1,14 +1,11 @@
-// server.js
+// server.js — versi Vercel
 
 const express   = require('express')
 const cors      = require('cors')
+const dotenv    = require('dotenv')
 const connectDB = require('./config/db')
 
-// Hanya load dotenv di local, Railway inject env otomatis
-if (process.env.NODE_ENV !== 'production') {
-  require('dotenv').config()
-}
-
+dotenv.config()
 connectDB()
 
 const app = express()
