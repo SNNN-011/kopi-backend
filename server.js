@@ -5,13 +5,10 @@ const cors      = require('cors')
 const connectDB = require('./config/db')
 
 // Hanya load dotenv di local, Railway inject env otomatis
-if (process.env.NODE_ENV !== 'production') {
-  require('dotenv').config()
-}
-
-connectDB()
-
-const app = express()
+const PORT = process.env.PORT || 7860
+app.listen(PORT, () => {
+  console.log(`Server berjalan di port ${PORT}`)
+})
 
 // Izinkan semua origin di production, ganti dengan URL frontend kamu setelah deploy
 app.use(cors({
