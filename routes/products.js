@@ -4,11 +4,13 @@ const express                    = require('express')
 const router                     = express.Router()
 const Product                    = require('../models/Product')
 const { verifyToken, isAdmin }   = require('../middleware/auth')
+const connectDB = require('../config/db')
 
 // GET /api/products — ambil semua produk (publik)
-// GET /api/products
 router.get('/', async (req, res) => {
   try {
+    await connectDB() // ← tambah ini di dalam handler
+    
     const { kategori, search } = req.query
     let filter = { tersedia: true }
     if (kategori) filter.kategori = kategori
@@ -17,8 +19,8 @@ router.get('/', async (req, res) => {
     const products = await Product.find(filter).sort({ createdAt: -1 })
     res.json(products)
   } catch (err) {
-    console.error('❌ Error products:', err) // tambah ini
-    res.status(500).json({ message: err.message }) // tampilkan error asli
+    console.error('❌ Error products:', err)
+    res.status(500).json({ message: err.message })
   }
 })
 
