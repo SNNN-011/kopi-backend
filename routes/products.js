@@ -6,23 +6,19 @@ const Product                    = require('../models/Product')
 const { verifyToken, isAdmin }   = require('../middleware/auth')
 
 // GET /api/products — ambil semua produk (publik)
+// GET /api/products
 router.get('/', async (req, res) => {
   try {
     const { kategori, search } = req.query
     let filter = { tersedia: true }
-
-    // Filter by kategori jika ada
     if (kategori) filter.kategori = kategori
-
-    // Search by nama jika ada
-    if (search) {
-      filter.nama = { $regex: search, $options: 'i' }
-    }
+    if (search) filter.nama = { $regex: search, $options: 'i' }
 
     const products = await Product.find(filter).sort({ createdAt: -1 })
     res.json(products)
   } catch (err) {
-    res.status(500).json({ message: 'Gagal mengambil produk' })
+    console.error('❌ Error products:', err) // tambah ini
+    res.status(500).json({ message: err.message }) // tampilkan error asli
   }
 })
 
