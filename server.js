@@ -9,7 +9,16 @@ dotenv.config()
 connectDB()
 
 const app = express()
-app.use(cors({ origin: 'http://localhost:3000' }))
+// ✅ Fix
+app.use(cors({
+  origin: [
+    'http://localhost:3000',
+    process.env.FRONTEND_URL, // URL frontend Vercel kamu
+  ],
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization'],
+  credentials: true,
+}))
 app.use(express.json())
 
 // Routes — aktifkan satu per satu setelah file-nya dibuat
