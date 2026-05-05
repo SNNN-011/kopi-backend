@@ -27,6 +27,8 @@ router.get('/', async (req, res) => {
 // GET /api/products/:id — detail produk (publik)
 router.get('/:id', async (req, res) => {
   try {
+    await connectDB()
+
     const product = await Product.findById(req.params.id)
     if (!product) {
       return res.status(404).json({ message: 'Produk tidak ditemukan' })
@@ -40,6 +42,8 @@ router.get('/:id', async (req, res) => {
 // POST /api/products — tambah produk (admin)
 router.post('/', verifyToken, isAdmin, async (req, res) => {
   try {
+    await connectDB()
+
     const { nama, deskripsi, harga, stok, kategori, berat, gambar } = req.body
 
     const product = await Product.create({
@@ -55,6 +59,8 @@ router.post('/', verifyToken, isAdmin, async (req, res) => {
 // PUT /api/products/:id — edit produk (admin)
 router.put('/:id', verifyToken, isAdmin, async (req, res) => {
   try {
+    await connectDB()
+
     const product = await Product.findByIdAndUpdate(
       req.params.id,
       req.body,
@@ -72,6 +78,8 @@ router.put('/:id', verifyToken, isAdmin, async (req, res) => {
 // DELETE /api/products/:id — hapus produk (admin)
 router.delete('/:id', verifyToken, isAdmin, async (req, res) => {
   try {
+    await connectDB()
+    
     const product = await Product.findByIdAndDelete(req.params.id)
     if (!product) {
       return res.status(404).json({ message: 'Produk tidak ditemukan' })
