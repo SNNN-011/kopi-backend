@@ -90,15 +90,19 @@ router.put('/:id', verifyToken, isAdmin, upload.single('gambar'), async (req, re
 
     const { nama, deskripsi, harga, stok, kategori, berat, tersedia, gambar } = req.body
     
-    // Siapkan data yang mau diupdate
-    let updateData = { nama, deskripsi, harga, stok, kategori, berat, tersedia }
+    // Siapkan data dasar yang PASTI ada
+    let updateData = { nama, deskripsi, harga, stok, kategori, berat }
     
-    // Jika ada file gambar baru yang diupload, ganti URL gambarnya
+    // Hanya masukkan 'tersedia' jika memang dikirim dari Frontend
+    if (tersedia !== undefined) {
+      updateData.tersedia = tersedia
+    }
+    
+    // Urusan gambar
     if (req.file) {
-      updateData.gambar = req.file.path
+      updateData.gambar = req.file.path // Gambar baru
     } else if (gambar) {
-      // Jika tidak ada upload baru tapi ada URL gambar lama dikirim
-      updateData.gambar = gambar
+      updateData.gambar = gambar // Pakai gambar lama
     }
 
     const product = await Product.findByIdAndUpdate(
