@@ -77,7 +77,7 @@ router.post('/', verifyToken, isAdmin, upload.single('gambar'), async (req, res)
 
     res.status(201).json({ message: 'Produk berhasil ditambahkan', product })
   } catch (err) {
-    console.error(err)
+    console.error("Error Detail POST:", err.message || err);
     res.status(500).json({ message: 'Gagal menambah produk' })
   }
 })
@@ -111,7 +111,7 @@ router.put('/:id', verifyToken, isAdmin, upload.single('gambar'), async (req, re
     }
     res.json({ message: 'Produk berhasil diupdate', product })
   } catch (err) {
-    console.error(err)
+    console.error("Error Detail PUT:", err.message || err);
     res.status(500).json({ message: 'Gagal mengupdate produk' })
   }
 })
